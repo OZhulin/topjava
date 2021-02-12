@@ -39,7 +39,7 @@ public class UserMealsUtil {
 
         meals.forEach(meal -> {
             if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime) &&
-                    sumCaloriesOfDay.getOrDefault(meal.getDateTime().toLocalDate(), 0) >= 2000) {
+                    sumCaloriesOfDay.getOrDefault(meal.getDateTime().toLocalDate(), 0) > caloriesPerDay) {
                 mealsWithExcess.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), true));
             }
         });
@@ -50,11 +50,8 @@ public class UserMealsUtil {
         Map<LocalDate, Integer> sumOfCaloriesForDay = meals.stream()
                 .collect(Collectors.groupingBy(meal -> meal.getDateTime().toLocalDate(), Collectors.summingInt(UserMeal::getCalories)));
         return meals.stream()
-                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime))
-                .map(meal -> new UserMealWithExcess(meal.getDateTime(),
-                                                    meal.getDescription(),
-                                                    meal.getCalories(),
-                                                    sumOfCaloriesForDay.get(meal.getDateTime().toLocalDate())>caloriesPerDay))
+                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime) && sumOfCaloriesForDay.get(meal.getDateTime().toLocalDate()) > caloriesPerDay)
+                .map(meal -> new UserMealWithExcess(meal.getDateTime(),meal.getDescription(),meal.getCalories(), true))
                 .collect(Collectors.toList());
     }
 }
