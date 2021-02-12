@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -28,7 +29,6 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByCycles(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
         List<UserMealWithExcess> mealsWithExcess = new ArrayList<>();
         Map<LocalDate, Integer> sumCaloriesOfDay = new HashMap<>();
 
@@ -38,8 +38,8 @@ public class UserMealsUtil {
         });
 
         meals.forEach(meal -> {
-            if(TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime) &&
-                    sumCaloriesOfDay.getOrDefault(meal.getDateTime().toLocalDate(), 0) > 2000){
+            if (TimeUtil.isBetweenHalfOpen(meal.getDateTime().toLocalTime(), startTime, endTime) &&
+                    sumCaloriesOfDay.getOrDefault(meal.getDateTime().toLocalDate(), 0) > 2000) {
                 mealsWithExcess.add(new UserMealWithExcess(meal.getDateTime(), meal.getDescription(), meal.getCalories(), true));
             }
         });
